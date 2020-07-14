@@ -115,7 +115,7 @@
                 <configuration>
                     <jdkVersion>11</jdkVersion>
                     <processTypes>
-                        <web>java -cp target/classes:target/dependency/* com.vlol.VlolApplication</web>
+                        <web>java -Dserver.port=$PORT $JAVA_OPTS -jar target/vlol-0.0.1-SNAPSHOT.jar</web>
                     </processTypes>
                 </configuration>
             </plugin>
