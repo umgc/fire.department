@@ -20,14 +20,24 @@ package com.vlol;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Configuration;
+
 
 /**
  * Application entry class.
  * @author Rob Garcia <rgarcia92@student.umgc.edu>
  */
+@Configuration
 @SpringBootApplication
-public class VlolApplication {
+public class VlolApplication extends SpringBootServletInitializer {
 
+    @Override
+    protected SpringApplicationBuilder configure(
+            SpringApplicationBuilder builder) {
+        return builder.sources(VlolApplication.class);
+    }
     /**
      * Application entry method.
      * @param args Command-line arguments, if any.
