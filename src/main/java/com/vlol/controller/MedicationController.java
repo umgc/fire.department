@@ -10,7 +10,7 @@
  *     (https://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html)
  *
  * @category  vlol
- * @package configuration
+ * @package controller
  * @author Rob Garcia <rgarcia92@student.umgc.edu>
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link      https://github.com/garciart/SWEN670
@@ -44,7 +44,7 @@ public class MedicationController {
 
     @RequestMapping("/list-medications")
     public String viewMedicationList(Model model) {
-        List<Medication> medicationList = medicationService.listAllMedications();
+        List<Medication> medicationList = medicationService.getAllMedications();
         model.addAttribute("medicationList", medicationList);
         return "admin/list-medications";
     }
@@ -77,8 +77,8 @@ public class MedicationController {
     }
 
     @RequestMapping("/search-medications")
-    public ModelAndView search(@RequestParam String keyword) {
-        List<Medication> result = medicationService.searchForMedication(keyword);
+    public ModelAndView findMedicationByKeyword(@RequestParam String keyword) {
+        List<Medication> result = medicationService.findMedicationByKeyword(keyword);
         ModelAndView mav = new ModelAndView("admin/search-medications");
         mav.addObject("result", result);
         return mav;

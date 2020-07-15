@@ -1,5 +1,6 @@
 /**
- * Role service class.
+ * String to Role formatter class.
+ * See https://stackoverflow.com/questions/25234357/select-tag-with-object-thymeleaf-and-spring-mvc
  *
  * Java Runtime Environment (JRE) version used: 11.0.7
  * Java Development Kit (JDK) version used: 11.0.7
@@ -19,41 +20,26 @@
 package com.vlol.service;
 
 import com.vlol.model.Role;
-import com.vlol.repository.RoleRepository;
-import java.util.List;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.ParseException;
+import org.springframework.format.Formatter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
-public class RoleService {
+public class RoleFormatter implements Formatter<Role> {
 
     @Autowired
-    private final RoleRepository roleRepository;
+    RoleService roleService; //Service -> DB
 
-    @Autowired
-    public RoleService(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    @Override
+    public String print(Role object, Locale locale) {
+        return (object != null ? object.getRoleID().toString() : "");
     }
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
-    }
-
-    public void saveRole(Role role) {
-        roleRepository.save(role);
-    }
-
-    public Role getRole(long roleID) {
-        return roleRepository.findById(roleID).get();
-    }
-
-    public void deleteRole(long roleID) {
-        roleRepository.deleteById(roleID);
-    }
-
-    public List<Role> findRoleByKeyword(String keyword) {
-        return roleRepository.findRoleByKeyword(keyword);
+    @Override
+    public Role parse(String text, Locale locale) throws ParseException {
+        Long id = Long.valueOf(text);
+        return this.roleService.getRole(id); //return Type object form DB
     }
 }

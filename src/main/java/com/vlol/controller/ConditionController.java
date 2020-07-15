@@ -10,7 +10,7 @@
  *     (https://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html)
  *
  * @category  vlol
- * @package configuration
+ * @package controller
  * @author Rob Garcia <rgarcia92@student.umgc.edu>
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link      https://github.com/garciart/SWEN670
@@ -44,7 +44,7 @@ public class ConditionController {
 
     @RequestMapping("/list-conditions")
     public String viewConditionList(Model model) {
-        List<Condition> conditionList = conditionService.listAllConditions();
+        List<Condition> conditionList = conditionService.getAllConditions();
         model.addAttribute("conditionList", conditionList);
         return "admin/list-conditions";
     }
@@ -77,8 +77,8 @@ public class ConditionController {
     }
 
     @RequestMapping("/search-conditions")
-    public ModelAndView search(@RequestParam String keyword) {
-        List<Condition> result = conditionService.searchForCondition(keyword);
+    public ModelAndView findConditionByKeyword(@RequestParam String keyword) {
+        List<Condition> result = conditionService.findConditionByKeyword(keyword);
         ModelAndView mav = new ModelAndView("admin/search-conditions");
         mav.addObject("result", result);
         return mav;

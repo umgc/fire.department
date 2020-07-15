@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Application entry class.
+ *
  * @author Rob Garcia <rgarcia92@student.umgc.edu>
  */
 @Configuration
@@ -40,6 +41,7 @@ public class VlolApplication extends SpringBootServletInitializer {
     }
     /**
      * Application entry method.
+     *
      * @param args Command-line arguments, if any.
      */
     public static void main(String[] args) {

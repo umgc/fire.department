@@ -10,7 +10,7 @@
  *     (https://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html)
  *
  * @category  vlol
- * @package model
+ * @package constraint
  * @author Rob Garcia <rgarcia92@student.umgc.edu>
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link      https://github.com/garciart/SWEN670
@@ -25,19 +25,20 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 
 @Constraint(validatedBy = FieldsValueMatchValidator.class)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FieldsValueMatch {
- 
+
     String message() default "Fields values don't match!";
- 
+
     String field();
- 
+
     String fieldMatch();
- 
-    @Target({ ElementType.TYPE })
+
+    @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
+
         FieldsValueMatch[] value();
     }
 }

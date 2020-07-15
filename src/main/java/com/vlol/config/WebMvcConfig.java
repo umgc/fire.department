@@ -18,10 +18,13 @@
  */
 package com.vlol.config;
 
+import com.vlol.service.RoleFormatter;
 import org.h2.server.web.WebServlet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -36,15 +39,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    /**
-     * Instantiates the BCryptPasswordEncoder.
-     *
-     * @return The bCryptPasswordEncoder object.
-     */
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder;
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler(
+                "/webjars/**",
+                "/img/**",
+                "/css/**",
+                "/js/**")
+                .addResourceLocations(
+                        "classpath:/META-INF/resources/webjars/",
+                        "classpath:/static/img/",
+                        "classpath:/static/css/",
+                        "classpath:/static/js/");
     }
 
     /**
@@ -60,17 +66,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return registrationBean;
     }
 
+    @Autowired
+    private RoleFormatter roleFormatter;
+
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(
-                "/webjars/**",
-                "/img/**",
-                "/css/**",
-                "/js/**")
-                .addResourceLocations(
-                        "classpath:/META-INF/resources/webjars/",
-                        "classpath:/static/img/",
-                        "classpath:/static/css/",
-                        "classpath:/static/js/");
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatter(roleFormatter);
     }
 }

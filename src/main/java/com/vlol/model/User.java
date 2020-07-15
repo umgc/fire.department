@@ -18,7 +18,6 @@
  */
 package com.vlol.model;
 
-import com.vlol.constraint.FieldsValueMatch;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -33,18 +32,6 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@FieldsValueMatch.List({
-    @FieldsValueMatch(
-            field = "password",
-            fieldMatch = "passwordConfirm",
-            message = "Passwords do not match!"
-    ),
-    @FieldsValueMatch(
-            field = "email",
-            fieldMatch = "username",
-            message = "Email addresses do not match!"
-    )
-})
 @Table(name = "appuser")
 public class User implements Serializable {
 
@@ -53,7 +40,7 @@ public class User implements Serializable {
     @Column(name = "user_id")
     private Long userID;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
@@ -61,19 +48,20 @@ public class User implements Serializable {
     @NotBlank(message = "First name is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 50, message = "Input exceeds size limits.")
+    @Size(max = 50, message = "Input exceeds size limits.")
     private String firstName;
 
     @Column(name = "last_name", length = 100)
     @NotBlank(message = "Last name is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 100, message = "Input exceeds size limits.")
+    @Size(max = 100, message = "Input exceeds size limits.")
     private String lastName;
 
     @Column(name = "dob")
-    @NotBlank(message = "DOB is required.")
+    // @NotBlank(message = "DOB is required.")
     @Past(message = "Date must be in the past.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private Date DOB;
 
@@ -88,21 +76,21 @@ public class User implements Serializable {
     @NotBlank(message = "Street address is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 100, message = "Input exceeds size limits.")
+    @Size(max = 100, message = "Input exceeds size limits.")
     private String streetAddress;
 
     @Column(name = "city", length = 50)
     @NotBlank(message = "City name is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 50, message = "Input exceeds size limits.")
+    @Size(max = 50, message = "Input exceeds size limits.")
     private String city;
 
     @Column(name = "us_state", length = 2)
     @NotBlank(message = "State abbreviation is required.")
     // Check if US state code is valid.
     @Pattern(regexp = "^(?-i:A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$", message = "Invalid state code.")
-    @Size(min = 2, max = 2, message = "Input exceeds size limits.")
+    @Size(max = 2, message = "Input exceeds size limits.")
     private String state;
 
     @Column(name = "zipcode", length = 5)
@@ -122,13 +110,13 @@ public class User implements Serializable {
     @Column(name = "ins_company", length = 50)
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 50, message = "Input exceeds size limits.")
+    @Size(max = 50, message = "Input exceeds size limits.")
     private String insCompany;
 
     @Column(name = "ins_policy_no", length = 50)
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 50, message = "Input exceeds size limits.")
+    @Size(max = 50, message = "Input exceeds size limits.")
     private String insPolicyNo;
 
     @Column(name = "adv_directive")
@@ -137,14 +125,14 @@ public class User implements Serializable {
     @Column(name = "adv_dir_type", length = 50)
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 50, message = "Input exceeds size limits.")
+    @Size(max = 50, message = "Input exceeds size limits.")
     private String advDirType;
 
     @Column(name = "poc_name", length = 100)
     @NotBlank(message = "A Point of Contact is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 100, message = "Input exceeds size limits.")
+    @Size(max = 100, message = "Input exceeds size limits.")
     private String pocName;
 
     @Column(name = "poc_phone", length = 10)
@@ -154,10 +142,13 @@ public class User implements Serializable {
     @Size(min = 10, max = 10, message = "Input exceeds size limits.")
     private String pocPhone;
 
+    @Column(name = "user_agent_id")
+    private Long userAgentNo;
+
     @Column(name = "doctor_name", length = 100)
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 100, message = "Input exceeds size limits.")
+    @Size(max = 100, message = "Input exceeds size limits.")
     private String doctorName;
 
     @Column(name = "doctor_phone", length = 10)
@@ -187,7 +178,7 @@ public class User implements Serializable {
     @Column(name = "user_comments", length = 300)
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 300)
+    @Size(max = 300, message = "Input exceeds size limits.")
     private String userComments;
 
     @Column(name = "email", length = 320, unique = true)
@@ -221,7 +212,7 @@ public class User implements Serializable {
     @NotBlank(message = "Security question is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 100)
+    @Size(max = 100, message = "Input exceeds size limits.")
     private String securityQuestion;
 
     @Column(name = "security_answer", length = 72)
@@ -229,19 +220,19 @@ public class User implements Serializable {
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
     // bcrypt maximum input length is 71 characters + 1 byte null terminator
-    @Size(min = 2, max = 72, message = "Input exceeds size limits.")
+    @Size(max = 72, message = "Input exceeds size limits.")
     private String securityAnswer;
 
     @Column(name = "date_created")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm:00")
-    @NotBlank(message = "Date account created is required.")
+    // @NotBlank(message = "Date account created is required.")
     @PastOrPresent(message = "Date account created cannot be in the future.")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
 
     @Column(name = "last_login_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm:00")
-    @NotBlank(message = "Last login date is required.")
+    // @NotBlank(message = "Last login date is required.")
     @PastOrPresent(message = "Last login date cannot be in the future.")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginDate;
@@ -249,7 +240,7 @@ public class User implements Serializable {
     @Column(name = "admin_comments", length = 300)
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 300)
+    @Size(max = 300, message = "Input exceeds size limits.")
     private String adminComments;
 
     @Column(name = "is_active")
@@ -265,7 +256,7 @@ public class User implements Serializable {
         return userID;
     }
 
-    public void setUserId(Long userID) {
+    public void setUserID(Long userID) {
         this.userID = userID;
     }
 
@@ -381,20 +372,28 @@ public class User implements Serializable {
         this.advDirType = advDirType;
     }
 
-    public String getPOCName() {
+    public String getPocName() {
         return pocName;
     }
 
-    public void setPOCName(String pocName) {
+    public void setPocName(String pocName) {
         this.pocName = pocName;
     }
 
-    public String getPOCPhone() {
+    public String getPocPhone() {
         return pocPhone;
     }
 
-    public void setPOCPhone(String pocPhone) {
+    public void setPocPhone(String pocPhone) {
         this.pocPhone = pocPhone;
+    }
+
+    public Long getuserAgentNo() {
+        return userAgentNo;
+    }
+
+    public void setuserAgentNo(Long userAgentNo) {
+        this.userAgentNo = userAgentNo;
     }
 
     public String getDoctorName() {

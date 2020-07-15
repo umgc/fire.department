@@ -10,7 +10,7 @@
  *     (https://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html)
  *
  * @category  vlol
- * @package configuration
+ * @package config
  * @author Rob Garcia <rgarcia92@student.umgc.edu>
  * @license https://opensource.org/licenses/MIT The MIT License
  * @link      https://github.com/garciart/SWEN670
@@ -23,12 +23,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.sql.DataSource;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * Extension and customization of Spring Boot's built-in
@@ -40,35 +42,46 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Qualifier("userDetailsServiceImpl")
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private DataSource dataSource;
-    @Value("${spring.queries.users-query}")
-    private String usersQuery;
-    @Value("${spring.queries.roles-query}")
-    private String rolesQuery;
+    private UserDetailsService userDetailsService;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth.
-                jdbcAuthentication()
-                .usersByUsernameQuery(usersQuery)
-                .authoritiesByUsernameQuery(rolesQuery)
-                .dataSource(dataSource)
-                .passwordEncoder(bCryptPasswordEncoder);
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    }
+
+    /**
+     * Instantiates the BCryptPasswordEncoder.
+     *
+     * @return The bCryptPasswordEncoder object.
+     */
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager customAuthenticationManager() throws Exception {
+        return authenticationManager();
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // For H2 console support only
         http.headers().frameOptions().disable();
-        
-        http.authorizeRequests()
-                .anyRequest()
+
+        http
+            .authorizeRequests()
+                .antMatchers("/resources/**", "/registration").permitAll()
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
+                .loginPage("/login")
                 .permitAll()
-                .and().csrf().disable();
+                .and()
+            .logout()
+                .permitAll();
         /*
         http.authorizeRequests()
                 .antMatchers("/").permitAll()

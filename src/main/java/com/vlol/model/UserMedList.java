@@ -45,14 +45,14 @@ public class UserMedList implements Serializable {
 
     @Column(name = "dosage")
     @Digits(integer = 6, fraction = 2, message = "Input is not in the form of a decimal.")
-    @NotNull
+    @NotNull(message = "Value cannot be null.")
     private float dosage;
 
     @Column(name = "frequency", length = 32)
     @NotBlank(message = "Frequency of dosage is required.")
     // Check if text is valid per RFC 3986.
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
-    @Size(min = 2, max = 100, message = "Input exceeds size limits.")
+    @Size(max = 100, message = "Input exceeds size limits.")
     private String frequency;
 
     public float getDosage() {
