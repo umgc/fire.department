@@ -1,3 +1,4 @@
+![Test/Code Coverage VLOL](https://github.com/umgc/fire.department/workflows/Test/Code%20Coverage%20VLOL/badge.svg?branch=master)
 ![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=umgc-city-vlol&metric=coverage)
 
 ![Sonarcloud Quality](https://sonarcloud.io/api/project_badges/quality_gate?project=umgc-city-vlol)
