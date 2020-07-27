@@ -23,8 +23,10 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
@@ -42,6 +44,7 @@ public class User implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id", nullable = false)
+    @Valid
     private Role role;
 
     @Column(name = "first_name", length = 50)
@@ -59,7 +62,7 @@ public class User implements Serializable {
     private String lastName;
 
     @Column(name = "dob")
-    // @NotBlank(message = "DOB is required.")
+    @NotNull(message = "DOB is required.")
     @Past(message = "Date must be in the past.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
@@ -120,6 +123,7 @@ public class User implements Serializable {
     private String insPolicyNo;
 
     @Column(name = "adv_directive")
+    @NotNull(message = "Value cannot be null.")
     private Boolean advDirective;
 
     @Column(name = "adv_dir_type", length = 50)
@@ -154,7 +158,7 @@ public class User implements Serializable {
     @Column(name = "doctor_phone", length = 10)
     // Check if phone number is valid.
     @Pattern(regexp = "^[2-9]\\d{2}\\d{3}\\d{4}$", message = "Invalid phone number.")
-    @Size(min = 10, max = 10, message = "Input exceeds size limits.")
+    @Size(max = 10, message = "Input exceeds size limits.")
     private String doctorPhone;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -180,14 +184,6 @@ public class User implements Serializable {
     @Pattern(regexp = "^[A-Za-z0-9\\s\\-._~:\\/?#\\[\\]@!$&'()*+,;=]*$", message = "Input contains illegal characters.")
     @Size(max = 300, message = "Input exceeds size limits.")
     private String userComments;
-
-    @Column(name = "email", length = 320, unique = true)
-    @NotBlank(message = "Email is required.")
-    // Check if text is valid per RFC 3986.
-    @Email(message = "Invalid email address.")
-    // Check if length is valid per RFC 3986.
-    @Size(min = 5, max = 320, message = "Input exceeds size limits.")
-    private String email;
 
     @Column(name = "username", length = 320, unique = true)
     @NotBlank(message = "Username is required.")
@@ -225,14 +221,14 @@ public class User implements Serializable {
 
     @Column(name = "date_created")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm:00")
-    // @NotBlank(message = "Date account created is required.")
+    @NotNull(message = "Date account created is required.")
     @PastOrPresent(message = "Date account created cannot be in the future.")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
 
     @Column(name = "last_login_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm:00")
-    // @NotBlank(message = "Last login date is required.")
+    @NotNull(message = "Last login date is required.")
     @PastOrPresent(message = "Last login date cannot be in the future.")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginDate;
@@ -244,9 +240,11 @@ public class User implements Serializable {
     private String adminComments;
 
     @Column(name = "is_active")
+    @NotNull(message = "Value cannot be null.")
     private Boolean isActive;
 
     @Column(name = "is_locked")
+    @NotNull(message = "Value cannot be null.")
     private Boolean isLocked;
 
     @OneToMany(mappedBy = "user")
@@ -268,10 +266,18 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    /**
+     * Gets the validated first name of the user.
+     * @return the first name attribute.
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Sets the user's first name attribute if valid.
+     * @param firstName the first name value submitted by the user.
+     */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -388,11 +394,11 @@ public class User implements Serializable {
         this.pocPhone = pocPhone;
     }
 
-    public Long getuserAgentNo() {
+    public Long getUserAgentNo() {
         return userAgentNo;
     }
 
-    public void setuserAgentNo(Long userAgentNo) {
+    public void setUserAgentNo(Long userAgentNo) {
         this.userAgentNo = userAgentNo;
     }
 
@@ -442,14 +448,6 @@ public class User implements Serializable {
 
     public void setUserComments(String userComments) {
         this.userComments = userComments;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {

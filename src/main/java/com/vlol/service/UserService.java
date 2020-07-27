@@ -30,7 +30,7 @@ import com.vlol.repository.UserRepository;
 import java.util.Date;
 import java.util.List;
 
-@Service
+@Service("userService")
 @Transactional
 public class UserService {
 
@@ -45,24 +45,21 @@ public class UserService {
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+    
+    public User findUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
     }
 
     public User saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setIsActive(Boolean.TRUE);
         user.setIsLocked(Boolean.FALSE);
-        Role userRole = roleRepository.findByTitle("participant");
-        // user.setRoles(new HashSet<VLOLRole>(Arrays.asList(userRole)));
+        Role userRole = roleRepository.findRoleByTitle("participant");
+        // user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         user.setRole(userRole);
         Date date = new Date();
         user.setLastLoginDate(date);
+        user.setDateCreated(date);
         return userRepository.save(user);
     }
 
